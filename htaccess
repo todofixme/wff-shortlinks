@@ -1,0 +1,40 @@
+RewriteEngine On
+RewriteBase /
+
+# News
+RewriteRule ^/?n/(\d+)(?:/(.*))?$ $2?action=start_news&cmd=view&id=$1 [QSA,N,DPI,NE]
+
+# Veranstaltung
+RewriteRule ^/?v/(\d+)(?:/(.*))?$ $2?veranstaltung=$1 [QSA,N,DPI,NE]
+
+# Veranstaltung Anmelden
+RewriteRule ^/?va/(\d+)(?:/(.*))?$ $2?veranstaltunganmelden=$1 [QSA,N,DPI,NE]
+
+# Event Anmelden
+RewriteRule ^/?ea/(\d+)(?:/(.*))?$ $2?action=events_anmeldungen&id=$1 [QSA,N,DPI,NE]
+
+# Newsletter
+RewriteRule ^/?nl/([a-zA-Z0-9]+)(?:/(.*))?$ $2?newsletter=$1 [QSA,N,DPI,NE]
+
+# Artikel
+RewriteRule ^/?a/(\d+)(?:/(.*))?$ $2?artikel=$1 [QSA,N,DPI,NE]
+
+# Data Raum
+RewriteRule ^/?dr/(\d+)(?:/(.*))?$ $2?action=data_raum&id=$1 [QSA,N,DPI,NE]
+
+# Download
+RewriteRule ^/?dl/([^/]+)(?:/(.*))?$ $2?download=$1 [QSA,N,DPI,NE]
+
+# UTM-Parameter
+RewriteRule ^/?s/([^/]+)(?:/(.*))?$ $2?utm_source=$1 [QSA,N,DPI,NE]
+RewriteRule ^/?c/([^/]+)(?:/(.*))?$ $2?utm_campaign=$1 [QSA,N,DPI,NE]
+RewriteRule ^/?m/([^/]+)(?:/(.*))?$ $2?utm_medium=$1 [QSA,N,DPI,NE]
+
+# Final Redirect
+# RewriteCond %{QUERY_STRING} .
+# RewriteRule ^/?$ https://wff-berlin.de/ [R=301,L,NE]
+
+# exclude URL-Shortener App
+RewriteCond %{REQUEST_URI} !^/app
+
+RewriteRule .* https://wff-berlin.de/ [R=301,L,NE]

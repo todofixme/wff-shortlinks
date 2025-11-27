@@ -1,0 +1,9 @@
+services:
+  app:
+    image: httpd:2.4-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ${PWD}/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ${PWD}/htaccess:/usr/local/apache2/htdocs/.htaccess
+      - ${PWD}/dist:/usr/local/apache2/htdocs/app

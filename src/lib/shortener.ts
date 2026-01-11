@@ -75,7 +75,7 @@ const URL_PATTERNS: UrlPattern[] = [
 export const validateUrl = (url: string): boolean => {
   try {
     new URL(url)
-    return url.startsWith(CONFIG.BASE_URL)
+    return url.startsWith(CONFIG.BASE_URL) || url.startsWith('https://www.wff-berlin.de')
   } catch {
     return false
   }

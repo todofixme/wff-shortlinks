@@ -1,5 +1,30 @@
 import {describe, expect, it} from 'vitest'
-import {CONFIG, generateShortUrl} from './shortener'
+import {CONFIG, generateShortUrl, validateUrl} from './shortener'
+
+describe('validateUrl', () => {
+  it('accepts URLs starting with base URL (without www)', () => {
+    expect(validateUrl('https://wff-berlin.de')).toBe(true)
+    expect(validateUrl('https://wff-berlin.de/page')).toBe(true)
+    expect(validateUrl('https://wff-berlin.de?param=value')).toBe(true)
+  })
+
+  it('accepts URLs starting with www subdomain', () => {
+    expect(validateUrl('https://www.wff-berlin.de')).toBe(true)
+    expect(validateUrl('https://www.wff-berlin.de/page')).toBe(true)
+    expect(validateUrl('https://www.wff-berlin.de?param=value')).toBe(true)
+  })
+
+  it('rejects URLs from other domains', () => {
+    expect(validateUrl('https://google.com')).toBe(false)
+    expect(validateUrl('https://example.com')).toBe(false)
+    expect(validateUrl('https://wff-berlin.com')).toBe(false)
+  })
+
+  it('rejects invalid URLs', () => {
+    expect(validateUrl('not-a-url')).toBe(false)
+    expect(validateUrl('')).toBe(false)
+  })
+})
 
 describe('generateShortUrl', () => {
   const BASE = CONFIG.BASE_URL
@@ -20,6 +45,20 @@ describe('generateShortUrl', () => {
     const {result, error} = generateShortUrl(`${BASE}?unknown=1`, '', '')
     expect(result).toBeNull()
     expect(error).toBe('Kein bekanntes URL-Muster erkannt.')
+  })
+
+  describe('www subdomain support', () => {
+    it('generates short URL for www URLs', () => {
+      const url = 'https://www.wff-berlin.de?veranstaltung=123'
+      const {result} = generateShortUrl(url, '', '')
+      expect(result).toBe(`${SHORT_BASE}/v/123`)
+    })
+
+    it('works with www URLs and UTM parameters', () => {
+      const url = 'https://www.wff-berlin.de?newsletter=456'
+      const {result} = generateShortUrl(url, 'email', 'campaign123')
+      expect(result).toBe(`${SHORT_BASE}/nl/456/s/email/c/campaign123`)
+    })
   })
 
   describe('URL Patterns', () => {
